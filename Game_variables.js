@@ -14,6 +14,6 @@ class Texture {
     Canvas.ctx.drawImage(this.data,this.start[0],this.start[1],this.end[0],this.end[1],x,y,16*Zoom,16*Zoom);
   }
 }
-let Floor_Texture = new Texture("Graphics/x32/Tile_32.bmp",0,0);
-let Wall_Texture;
+let Floor_Texture = new Texture("Graphics/x32/Tile_32.bmp");
+let Wall_Texture  = new Texture("Graphics/x32/Wall_32.bmp") ;
 let Chest_Texture = new Texture("Graphics/x32/Chest_32.png",64,0);

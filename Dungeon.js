@@ -14,7 +14,7 @@ class Dungeon  {
             Floor_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
           break;
           default:
-            //Chest_Closed.draw(0,0,16*Zoom,16*Zoom,(cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            Wall_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
           break;
         }
       }
