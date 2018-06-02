@@ -532,7 +532,8 @@ class Matrix {
     fill = (typeof fill == "number") ? fill : 0;
     this.cols = columns;
     this.rows = rows;
-    this.data = new Array(this.rows).fill(new Array(this.cols).fill(fill));
+    this.data = new Array(this.rows).fill(0);
+    this.data = this.data.map(rows => new Array(this.cols).fill(fill));
   }
   }
 

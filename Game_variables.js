@@ -1,5 +1,5 @@
 let Character_isCreated = false;
-let Zoom = 2;
+let Zoom = 1;
 let Character,
     CurrentDungeon;
 

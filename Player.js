@@ -7,7 +7,7 @@ class Player {
     this.level = 1;
     this.inv = new Inventory(8);
     this.state = "free";
-    this.pos = {x:0,y:0};
+    this.pos = {x:random(0,50/Zoom),y:random(0,50/Zoom)};
   }
 
   move(direction="north") {
@@ -15,21 +15,25 @@ class Player {
       case "w":
       if(checkMap(this.pos.x,this.pos.y-1)==0) {
       this.pos.y--;
+      CurrentDungeon.scroll("s");
       }
       break;
       case "a":
       if(checkMap(this.pos.x-1,this.pos.y)==0) {
       this.pos.x--;
+      CurrentDungeon.scroll("d");
       }
       break;
       case "s":
       if(checkMap(this.pos.x,this.pos.y+1)==0) {
       this.pos.y++;
+      CurrentDungeon.scroll("w");
       }
       break;
       case "d":
       if(checkMap(this.pos.x+1,this.pos.y)==0) {
       this.pos.x++;
+      CurrentDungeon.scroll("a");
       }
       break;
     }
@@ -78,5 +82,6 @@ document.onkeydown = function(e) {
   if(!Character_isCreated) {return}
   if(["w","a","s","d"].some(keycode => keycode==e.key)) {
     Character.move(e.key);
+    //CurrentDungeon.scroll(e.key);
   }
 }
