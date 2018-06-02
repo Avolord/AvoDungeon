@@ -11,10 +11,10 @@ class Dungeon  {
       for(let rows=this.viewport[1];rows<this.viewport[3];rows++) {
         switch(this.map_data.data[rows][cols]) {
           case 0:
-            Canvas.Rectangle((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom,16*Zoom,16*Zoom,"fill","brown");
+            Floor_Texture.draw(0,0,16*Zoom,16*Zoom,(cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
           break;
           default:
-            Canvas.Rectangle((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom,16*Zoom,16*Zoom,"fill","grey");
+            //Chest_Closed.draw(0,0,16*Zoom,16*Zoom,(cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
           break;
         }
       }

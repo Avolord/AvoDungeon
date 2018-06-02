@@ -1,10 +1,14 @@
 Animation(true);
-let D1 = new Dungeon();
+
+let D1 = new Dungeon(64);
+new Warrior("Jochen");
+
 function setup() {
 }
 
 function draw() {
 	D1.draw();
+	Character.draw();
 }
 
 function NoLoop() {

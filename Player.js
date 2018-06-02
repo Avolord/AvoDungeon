@@ -28,7 +28,7 @@ class Player {
   }
 
   draw() {
-    
+    Chest_Closed.draw(0,0,16*Zoom,16*Zoom,(this.pos.x-D1.viewport[0])*16*Zoom,(this.pos.y-D1.viewport[1])*16*Zoom);
   }
 
 }
