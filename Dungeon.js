@@ -11,7 +11,7 @@ class Dungeon  {
       for(let rows=this.viewport[1];rows<this.viewport[3];rows++) {
         switch(this.map_data.data[rows][cols]) {
           case 0:
-            Floor_Texture.draw(0,0,16*Zoom,16*Zoom,(cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            Floor_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
           break;
           default:
             //Chest_Closed.draw(0,0,16*Zoom,16*Zoom,(cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
@@ -51,7 +51,15 @@ class Dungeon  {
   }
 
   Zoom(value = 2) {
-
+    Zoom = (50/value <= this.size) ? value : Zoom;
+    this.viewport = [0,0,50/Zoom,50/Zoom];
   }
 
+}
+
+function checkMap(x,y) {
+  if(x<0 || x>CurrentDungeon.size || y<0 || y>CurrentDungeon.size)
+  return 1;
+  else
+  return CurrentDungeon.map_data.data[y][x];
 }

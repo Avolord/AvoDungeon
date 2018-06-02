@@ -13,22 +13,30 @@ class Player {
   move(direction="north") {
     switch(direction) {
       case "w":
+      if(checkMap(this.pos.x,this.pos.y-1)==0) {
       this.pos.y--;
+      }
       break;
       case "a":
+      if(checkMap(this.pos.x-1,this.pos.y)==0) {
       this.pos.x--;
+      }
       break;
       case "s":
+      if(checkMap(this.pos.x,this.pos.y+1)==0) {
       this.pos.y++;
+      }
       break;
       case "d":
+      if(checkMap(this.pos.x+1,this.pos.y)==0) {
       this.pos.x++;
+      }
       break;
     }
   }
 
   draw() {
-    Chest_Closed.draw(0,0,16*Zoom,16*Zoom,(this.pos.x-D1.viewport[0])*16*Zoom,(this.pos.y-D1.viewport[1])*16*Zoom);
+    Chest_Texture.draw((this.pos.x-CurrentDungeon.viewport[0])*16*Zoom,(this.pos.y-CurrentDungeon.viewport[1])*16*Zoom);
   }
 
 }

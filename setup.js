@@ -1,13 +1,13 @@
 Animation(true);
 
-let D1 = new Dungeon(64);
+CurrentDungeon = new Dungeon(64);
 new Warrior("Jochen");
 
 function setup() {
 }
 
 function draw() {
-	D1.draw();
+	CurrentDungeon.draw();
 	Character.draw();
 }
 
