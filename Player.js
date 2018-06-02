@@ -28,7 +28,7 @@ class Player {
   }
 
   draw() {
-
+    
   }
 
 }
