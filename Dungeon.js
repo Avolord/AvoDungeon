@@ -8,7 +8,7 @@ class Dungeon  {
   }
 
   generate() {
-    let max_rooms = random(this.size/3,this.size/2);
+    let max_rooms = random(this.size/5,this.size/3);
     let min_roomsize = Math.floor(this.size/10);
     let max_roomsize = Math.ceil(this.size/5);
     for(let i=0;i<max_rooms;i++) {
