@@ -12,7 +12,8 @@ class Dungeon  {
     let max_rooms = random(this.size/5,this.size/4);
     let min_roomsize = 5;
     let max_roomsize = 15;
-    for(let i=0;i<max_rooms;i++) {
+    this.rooms[0] = {x:random(1,50/Zoom-10),y:random(1,50/Zoom-10),w:random(5,10),h:random(5,10)}; //first Room in viewport
+    for(let i=1;i<max_rooms;i++) {
       let room = {};
         room.x = random(1,this.size-1-max_roomsize);
         room.y = random(1,this.size-1-max_roomsize);
