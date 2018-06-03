@@ -7,7 +7,7 @@ class Player {
     this.level = 1;
     this.inv = new Inventory(8);
     this.state = "free";
-    this.pos = {x:random(0,50/Zoom),y:random(0,50/Zoom)};
+    this.pos = {x:50/Zoom/2,y:50/Zoom/2};
   }
 
   move(direction="north") {
@@ -15,25 +15,33 @@ class Player {
       case "w":
       if(checkMap(this.pos.x,this.pos.y-1)==0) {
       this.pos.y--;
+      if(this.pos.y <= CurrentDungeon.size-50/Zoom/2) {
       CurrentDungeon.scroll("s");
+      }
       }
       break;
       case "a":
       if(checkMap(this.pos.x-1,this.pos.y)==0) {
       this.pos.x--;
+      if(this.pos.x <= CurrentDungeon.size-50/Zoom/2) {
       CurrentDungeon.scroll("d");
+      }
       }
       break;
       case "s":
       if(checkMap(this.pos.x,this.pos.y+1)==0) {
       this.pos.y++;
+      if(this.pos.y >= 50/Zoom/2) {
       CurrentDungeon.scroll("w");
+      }
       }
       break;
       case "d":
       if(checkMap(this.pos.x+1,this.pos.y)==0) {
       this.pos.x++;
+      if(this.pos.x >= 50/Zoom/2) {
       CurrentDungeon.scroll("a");
+      }
       }
       break;
     }

@@ -2,33 +2,64 @@ class Dungeon  {
   constructor(size = 50) {
     this.map_data = new Matrix(size,size,1);
     this.size = size;
+    this.rooms = [];
     this.generate();
     this.viewport = [0,0,50/Zoom,50/Zoom];
   }
 
   generate() {
-    let max_rooms = Math.floor(this.size/5);
-    let min_roomsize = Math.floor(this.size/20);
+    let max_rooms = random(this.size/3,this.size/2);
+    let min_roomsize = Math.floor(this.size/10);
     let max_roomsize = Math.ceil(this.size/5);
     for(let i=0;i<max_rooms;i++) {
-      let cols = random(0,this.size-1-max_roomsize);
-      let rows = random(0,this.size-1-max_roomsize);
-      let width = random(min_roomsize,max_roomsize);
-      let height = random(min_roomsize,max_roomsize);
-      for(let j=0;j<width;j++) {
-        for(let k=0;k<height;k++) {
-          this.map_data.data[rows+k][cols+j] = 0;
-        }
+      let room = {};
+        room.x = random(1,this.size-1-max_roomsize);
+        room.y = random(1,this.size-1-max_roomsize);
+        room.w = random(min_roomsize,max_roomsize);
+        room.h = random(min_roomsize,max_roomsize);
+
+      if(this.RoomCollide(room)) {
+        i--;
+        continue;
       }
+
+      room.w--;
+      room.h--;
+      this.rooms.push(room)
     }
 
+    this.rooms.forEach(room => {
+      for(let i=0;i<room.w;i++) {
+        for(let j=0;j<room.h;j++) {
+          this.map_data.data[room.y+j][room.x+i] = 0;
+        }
+      }
+    });
   }
 
-  // move_map_by_character() {
-  //   switch(Character.pos.x) {
-  //     case
-  //   }
-  // }
+  RoomCollide(room) {
+    return this.rooms.some(check => {
+      return (!((check.x + check.w < room.x) || (check.y + check.h < room.y) || (check.x > room.x + room.w) || (check.y > room.y + room.h)))
+    });
+  }
+
+  mazegen() {
+    let Points = new Array(this.size).fill(0);
+    Points = Points.map(x => {return{row:random(0,this.size-1),col:random(0,this.size-1)}});
+    Points[0] = {row:25/Zoom,col:25/Zoom}; //Spawn is always floor
+    Points.forEach(x => {
+      this.map_data.data[x.row][x.col] = 0;
+      let randomP = Points[random(0,this.size-1)];
+      let dY = randomP.row-x.row;
+      let dX = randomP.col-x.col;
+      for(let i=0;i<dY;i+=dY/dY) {
+        this.map_data.data[x.row+i][x.col] = 0;
+      }
+      for(let i=0;i<dX;i+=dX/dX) {
+        this.map_data.data[x.row][x.col+i] = 0;
+      }
+    });
+  }
 
   draw() {
     //this.move_map_by_character();
