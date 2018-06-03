@@ -1,6 +1,6 @@
 Animation(true);
 
-CurrentDungeon = new Dungeon(80);
+CurrentDungeon = new Dungeon(50);
 new Warrior("Jochen");
 
 function setup() {

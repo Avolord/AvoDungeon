@@ -7,13 +7,14 @@ class Player {
     this.level = 1;
     this.inv = new Inventory(8);
     this.state = "free";
-    this.pos = {x:50/Zoom/2,y:50/Zoom/2};
+    this.pos = CurrentDungeon.player_spawn;
+    this.Ghost_Mode = false; //Debugging [can fly through Objects]
   }
 
   move(direction="north") {
     switch(direction) {
       case "w":
-      if(checkMap(this.pos.x,this.pos.y-1)==0) {
+      if(checkMap(this.pos.x,this.pos.y-1)==1 || this.Ghost_Mode) {
       this.pos.y--;
       if(this.pos.y <= CurrentDungeon.size-50/Zoom/2) {
       CurrentDungeon.scroll("s");
@@ -21,7 +22,7 @@ class Player {
       }
       break;
       case "a":
-      if(checkMap(this.pos.x-1,this.pos.y)==0) {
+      if(checkMap(this.pos.x-1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x--;
       if(this.pos.x <= CurrentDungeon.size-50/Zoom/2) {
       CurrentDungeon.scroll("d");
@@ -29,7 +30,7 @@ class Player {
       }
       break;
       case "s":
-      if(checkMap(this.pos.x,this.pos.y+1)==0) {
+      if(checkMap(this.pos.x,this.pos.y+1)==1 || this.Ghost_Mode) {
       this.pos.y++;
       if(this.pos.y >= 50/Zoom/2) {
       CurrentDungeon.scroll("w");
@@ -37,7 +38,7 @@ class Player {
       }
       break;
       case "d":
-      if(checkMap(this.pos.x+1,this.pos.y)==0) {
+      if(checkMap(this.pos.x+1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x++;
       if(this.pos.x >= 50/Zoom/2) {
       CurrentDungeon.scroll("a");

@@ -16,4 +16,10 @@ class Texture {
 }
 let Floor_Texture = new Texture("Graphics/x32/Tile_32.bmp");
 let Wall_Texture  = new Texture("Graphics/x32/Wall_32.bmp") ;
-let Chest_Texture = new Texture("Graphics/x32/Chest_32.png",64,0);
+let Chest_Texture = new Texture("Graphics/x32/Chest_32.png");
+
+let Wall_Top_Bottom = new Texture("Graphics/x32/Wall_32.bmp");
+let Wall_Left =       new Texture("Graphics/x32/Wall_Left_32.png");
+let Wall_Right =       new Texture("Graphics/x32/Wall_Right_32.png");
+let Wall_Corner_TL =  new Texture("Graphics/x32/Wall_CornerTL_32.bmp");
+let Wall_Corner_TR =  new Texture("Graphics/x32/Wall_CornerTR_32.bmp");
