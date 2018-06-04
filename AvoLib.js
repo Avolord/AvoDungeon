@@ -100,8 +100,9 @@ class CanDraw {
     this.EndDraw(style || this.style);
   }
 
-  Rectangle(x,y,w,h,style,color) {
+  Rectangle(x,y,w,h,style,color,alpha = 1) {
     this.StartDraw(color || this.ctx.fillStyle);
+    Canvas.alpha(alpha);
     switch(style || this.style) {
       case "fill":
       this.ctx.fillRect(x,y,w,h);
@@ -110,6 +111,7 @@ class CanDraw {
       this.ctx.strokeRect(x,y,w,h);
       break;
     }
+    Canvas.alpha();
   }
 
   Write(x,y,text,size,color,style) {

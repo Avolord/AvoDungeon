@@ -1,26 +1,32 @@
 class Dungeon  {
   constructor(size = 50) {
     this.map_data = new Matrix(size,size,0);
+    //this.light_map.random(0,10);
     this.size = size;
     this.rooms = [];
-    this.generate();
+    this.batch_size = 50;
+    this.generate(1);
     this.viewport = [0,0,50/Zoom,50/Zoom];
     this.player_spawn = this.PlayerSpawn();
+    this.fully_lit = false;
+    this.light_map = this.generate_light_map();
   }
 
-  generate() {
-    let max_rooms = random(this.size/5,this.size/4);
+  generate(iterations = 1) {
+    let b_start = 1;
+    for(let iter=0;iter<iterations;iter++) {
+    let max_rooms = 5//random(this.size/5,this.size/4);
     let min_roomsize = 5;
-    let max_roomsize = 15;
+    let max_roomsize = 10;
     this.rooms[0] = {x:random(1,50/Zoom-10),y:random(1,50/Zoom-10),w:random(5,10),h:random(5,10)}; //first Room in viewport
     for(let i=1;i<max_rooms;i++) {
       let room = {};
-        room.x = random(1,this.size-1-max_roomsize);
-        room.y = random(1,this.size-1-max_roomsize);
+        room.x = random(1,this.batch_size-1-max_roomsize);
+        room.y = random(1,this.batch_size-1-max_roomsize);
         room.w = random(min_roomsize,max_roomsize);
         room.h = random(min_roomsize,max_roomsize);
 
-      if(this.RoomCollide(room)) {
+      if(this.RoomCollide(room,"",2)) {
         i--;
         continue;
       }
@@ -28,11 +34,13 @@ class Dungeon  {
       room.w--;
       room.h--;
       this.rooms.push(room);
+      this.SquashRooms(10);
     }
-    this.SquashRooms(10);
+  }
     this.build_rooms();
-    this.build_corridors(2);
+    this.build_corridors(1);
     this.build_walls();
+    this.SpawnChests();
 }
 
   build_rooms() {
@@ -50,14 +58,19 @@ class Dungeon  {
     this.rooms.forEach(room => {
       let roomA = room;
       let roomB = this.ClosestRoom(roomA);
+      let roomC = this.rooms[random(0,this.rooms.length-1)];
 
       let PointA = {
-        x:random(roomA.x,roomA.x+roomA.w),
-        y:random(roomA.y,roomA.y+roomA.h)
+        x:random(roomA.x,roomA.x+roomA.w-1),
+        y:random(roomA.y,roomA.y+roomA.h-1)
       };
       let PointB = {
-        x:random(roomB.x,roomB.x+roomB.w),
-        y:random(roomB.y,roomB.y+roomB.h)
+        x:random(roomB.x,roomB.x+roomB.w-1),
+        y:random(roomB.y,roomB.y+roomB.h-1)
+      };
+      let PointC = {
+        x:random(roomC.x,roomC.x+roomC.w-1),
+        y:random(roomC.y,roomC.y+roomC.h-1)
       };
 
       while((PointB.x != PointA.x) || (PointB.y != PointA.y)) {
@@ -69,6 +82,16 @@ class Dungeon  {
         }
         this.map_data.data[PointB.y][PointB.x] = 1;
       }
+
+      // while((PointC.x != PointA.x) || (PointC.y != PointA.y)) {
+      //   if(PointC.x != PointA.x) {
+      //     PointC.x = (PointA.x < PointC.x) ? PointC.x-1 : PointC.x+1;
+      //   }
+      //    else if(PointA.y != PointC.y) {
+      //     PointC.y = (PointA.y < PointC.y) ? PointC.y-1 : PointC.y+1;
+      //   }
+      //   this.map_data.data[PointC.y][PointC.x] = 1;
+      // }
     });
   }
   }
@@ -96,11 +119,11 @@ class Dungeon  {
     }
   }
 
-  RoomCollide(room,ignore) {
+  RoomCollide(room,ignore,buffer=0) {
     for(let i in this.rooms) {
       if(i==ignore) {continue}
       let check = this.rooms[i];
-      if(!((check.x + check.w < room.x) || (check.y + check.h < room.y) || (check.x > room.x + room.w) || (check.y > room.y + room.h))) {
+      if(!((check.x + check.w + buffer < room.x) || (check.y + check.h + buffer < room.y) || (check.x > room.x + room.w + buffer) || (check.y > room.y + room.h + buffer))) {
         return true
       }
     }
@@ -112,13 +135,21 @@ class Dungeon  {
         let temp_room = room;
         temp_room.x--;
         temp_room.y--;
-        if((this.RoomCollide(temp_room,index) || room.x<1 || room.y<1)) {
-          temp_room.x++
+        if((this.RoomCollide(temp_room,index,2) || room.x<1 || room.y<1)) {
+          temp_room.x++;
           temp_room.y++;
         }
         return temp_room;
       });
     }
+  }
+
+  SpawnChests(frequency = 0.1) {
+    this.rooms.forEach(room => {
+      if(random(0,1/frequency) == 0) {
+        this.map_data.data[room.y+random(1,room.h-2)][room.x+random(1,room.w-2)] = 7;
+      }
+    });
   }
 
   ClosestRoom(room) {
@@ -149,28 +180,63 @@ class Dungeon  {
   draw() {
     for(let cols=this.viewport[0];cols<this.viewport[2];cols++) {
       for(let rows=this.viewport[1];rows<this.viewport[3];rows++) {
-        switch(this.map_data.data[rows][cols]) {
-          case 1: //Floor
-            Floor_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
-          case 2: //Wall Top/Bot
-            Wall_Top_Bottom.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
-          case 3: //Wall Left
-            Wall_Left.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
-          case 4: //Wall Right
-            Wall_Right.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
-          case 5: //Corner TL
-            Wall_Corner_TL.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
-          case 6: //Corner TR
-            Wall_Corner_TR.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
-          break;
+
+        if(this.light_map.data[rows][cols] > 0) {
+
+          switch(this.map_data.data[rows][cols]) {
+            case 1: //Floor
+              Floor_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 2: //Wall Top/Bot
+              Wall_Top_Bottom.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 3: //Wall Left
+              Wall_Left.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 4: //Wall Right
+              Wall_Right.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 5: //Corner TL
+              Wall_Corner_TL.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 6: //Corner TR
+              Wall_Corner_TR.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+            case 7: //Chest
+              Floor_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+              Chest_Texture.draw((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom);
+            break;
+          }
+        } else {
+          Canvas.Rectangle((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom,16*Zoom,16*Zoom,"fill","black");
         }
       }
     }
+    this.draw_light_map();
+  }
+
+  draw_light_map() {
+    for(let cols=this.viewport[0];cols<this.viewport[2];cols++) {
+      for(let rows=this.viewport[1];rows<this.viewport[3];rows++) {
+        if(this.light_map.data[rows][cols] > 0 && this.light_map.data[rows][cols] < 10) {
+        Canvas.Rectangle((cols-this.viewport[0])*16*Zoom,(rows-this.viewport[1])*16*Zoom,16*Zoom,16*Zoom,"fill","black",1/(this.light_map.data[rows][cols]+1));
+        }
+      }
+    }
+  }
+
+  generate_light_map() {
+    let lightmap = this.map_data.copy();
+    lightmap.map(x => x = (x==0) ? 10 : 0);
+    return lightmap;
+  }
+
+  check_fully_lit() {
+    return this.light_map.data.every(rows => {
+      return rows.every(cols => {
+        return cols == 10;
+      });
+    });
   }
 
   scroll(direction = "w") {

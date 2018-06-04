@@ -9,6 +9,8 @@ class Player {
     this.state = "free";
     this.pos = CurrentDungeon.player_spawn;
     this.Ghost_Mode = false; //Debugging [can fly through Objects]
+    this.light_radius = 10;
+    this.light_power = 2;
   }
 
   move(direction="north") {
@@ -50,6 +52,25 @@ class Player {
 
   draw() {
     Chest_Texture.draw((this.pos.x-CurrentDungeon.viewport[0])*16*Zoom,(this.pos.y-CurrentDungeon.viewport[1])*16*Zoom);
+    this.light_up_dungeon();
+  }
+
+  light_up_dungeon() {
+      for(let i=-this.light_radius;i<this.light_radius;i++) {
+        for(let j=-this.light_radius;j<this.light_radius;j++) {
+          if(this.pos.y+i >= 0 && this.pos.y+i <= CurrentDungeon.size-1 && this.pos.x+j >= 0 && this.pos.x+j <= CurrentDungeon.size-1) {
+            let d = this.dist(this.pos.x+j,this.pos.y+i);
+            let curr_lightlvl = CurrentDungeon.light_map.data[this.pos.y+i][this.pos.x+j];
+            CurrentDungeon.light_map.data[this.pos.y+i][this.pos.x+j] = (this.light_radius*2-d > curr_lightlvl) ? this.light_radius*2+this.light_power-d : curr_lightlvl;
+          }
+        }
+      }
+  }
+
+  dist(x,y) { //Pixel-dist [abs(dx+dy)]
+    let dx = this.pos.x-x;
+    let dy = this.pos.y-y;
+    return Math.abs(dx*dx+dy*dy);
   }
 
 }
