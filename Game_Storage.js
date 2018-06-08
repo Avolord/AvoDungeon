@@ -4,7 +4,7 @@ class Inventory {
   }
 
   add(Item) {
-    
+
   }
 }
 
@@ -21,5 +21,6 @@ class Chest {
       this.inv = new Inventory(32);
       break;
     }
+    this.state = 1; //closed
   }
 }

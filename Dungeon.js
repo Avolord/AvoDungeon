@@ -4,12 +4,13 @@ class Dungeon  {
     //this.light_map.random(0,10);
     this.size = size;
     this.rooms = [];
+    this.chests = [];
     this.batch_size = 50;
-    this.generate(1);
-    this.viewport = [0,0,50/Zoom,50/Zoom];
-    this.player_spawn = this.PlayerSpawn();
     this.fully_lit = false;
+    this.viewport = [0,0,50/Zoom,50/Zoom];
+    this.generate(1);
     this.light_map = this.generate_light_map();
+    this.player_spawn = this.PlayerSpawn();
   }
 
   generate(iterations = 1) {
@@ -147,7 +148,10 @@ class Dungeon  {
   SpawnChests(frequency = 0.1) {
     this.rooms.forEach(room => {
       if(random(0,1/frequency) == 0) {
-        this.map_data.data[room.y+random(1,room.h-2)][room.x+random(1,room.w-2)] = 7;
+        let rows = room.y+random(1,room.h-2);
+        let cols = room.x+random(1,room.w-2);
+        this.map_data.data[rows][cols] = 7;
+        this.chests.push(new Chest(["small","medium","large"][random(0,2)]));
       }
     });
   }
@@ -266,6 +270,10 @@ class Dungeon  {
       }
       break;
     }
+  }
+
+  clear_light_map() {
+      this.light_map = new Matrix(this.size,this.size,10);
   }
 
 }

@@ -8,14 +8,17 @@ class Player {
     this.inv = new Inventory(8);
     this.state = "free";
     this.pos = CurrentDungeon.player_spawn;
+    this.direction = "w";
     this.Ghost_Mode = false; //Debugging [can fly through Objects]
     this.light_radius = 10;
     this.light_power = 2;
   }
 
-  move(direction="north") {
+  move(direction="w") {
+    Chest_Texture.switch_state();
     switch(direction) {
       case "w":
+      this.direction = "w";
       if(checkMap(this.pos.x,this.pos.y-1)==1 || this.Ghost_Mode) {
       this.pos.y--;
       if(this.pos.y <= CurrentDungeon.size-50/Zoom/2) {
@@ -24,6 +27,7 @@ class Player {
       }
       break;
       case "a":
+      this.direction = "a";
       if(checkMap(this.pos.x-1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x--;
       if(this.pos.x <= CurrentDungeon.size-50/Zoom/2) {
@@ -32,6 +36,7 @@ class Player {
       }
       break;
       case "s":
+      this.direction = "s";
       if(checkMap(this.pos.x,this.pos.y+1)==1 || this.Ghost_Mode) {
       this.pos.y++;
       if(this.pos.y >= 50/Zoom/2) {
@@ -40,6 +45,7 @@ class Player {
       }
       break;
       case "d":
+      this.direction = "d";
       if(checkMap(this.pos.x+1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x++;
       if(this.pos.x >= 50/Zoom/2) {
