@@ -45,7 +45,7 @@ class Dungeon  {
 
 generate2() {
   let min_roomsize = 5;
-  let max_roomsize = 10;
+  let max_roomsize = 50;
   let max_rooms = 1/(max_roomsize*max_roomsize)*Math.pow(this.size,1.5)+10;
   this.rooms[0] = {x:random(1,50/Zoom-10),y:random(1,50/Zoom-10),w:random(5,10),h:random(5,10)}; //first Room in viewport
   for(let i=1;i<max_rooms;i++) {

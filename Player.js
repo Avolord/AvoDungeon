@@ -15,7 +15,7 @@ class Player {
   }
 
   move(direction="w") {
-    Chest_Texture.switch_state();
+    Player_Texture.switch_state();
     switch(direction) {
       case "w":
       this.direction = "w";
@@ -57,7 +57,7 @@ class Player {
   }
 
   draw() {
-    Chest_Texture.draw((this.pos.x-CurrentDungeon.viewport[0])*16*Zoom,(this.pos.y-CurrentDungeon.viewport[1])*16*Zoom);
+    Player_Texture.draw((this.pos.x-CurrentDungeon.viewport[0])*16*Zoom,(this.pos.y-CurrentDungeon.viewport[1])*16*Zoom);
     this.light_up_dungeon();
   }
 
