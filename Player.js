@@ -15,10 +15,10 @@ class Player {
   }
 
   move(direction="w") {
-    Player_Texture.switch_state();
     switch(direction) {
       case "w":
       this.direction = "w";
+      Player_Texture.switch_state(1);
       if(checkMap(this.pos.x,this.pos.y-1)==1 || this.Ghost_Mode) {
       this.pos.y--;
       if(this.pos.y <= CurrentDungeon.size-50/Zoom/2) {
@@ -28,6 +28,7 @@ class Player {
       break;
       case "a":
       this.direction = "a";
+      Player_Texture.switch_state(3);
       if(checkMap(this.pos.x-1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x--;
       if(this.pos.x <= CurrentDungeon.size-50/Zoom/2) {
@@ -37,6 +38,7 @@ class Player {
       break;
       case "s":
       this.direction = "s";
+      Player_Texture.switch_state(2);
       if(checkMap(this.pos.x,this.pos.y+1)==1 || this.Ghost_Mode) {
       this.pos.y++;
       if(this.pos.y >= 50/Zoom/2) {
@@ -46,6 +48,7 @@ class Player {
       break;
       case "d":
       this.direction = "d";
+      Player_Texture.switch_state(4);
       if(checkMap(this.pos.x+1,this.pos.y)==1 || this.Ghost_Mode) {
       this.pos.x++;
       if(this.pos.x >= 50/Zoom/2) {

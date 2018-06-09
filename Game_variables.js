@@ -34,7 +34,7 @@ let Wall_Texture  = new Texture("Graphics/x32/World/Wall_32.bmp") ;
 let Chest_Texture = new Texture("Graphics/x32/Entities/Chest_32.png");
     Chest_Texture.set_states(3);
 let Player_Texture = new Texture("Graphics/x32/Player/Hero_standing_x32.png");
-	Player_Texture.set_states(4);
+	 Player_Texture.set_states(4);
 
 let Wall_Top_Bottom = new Texture("Graphics/x32/World/Wall_32.bmp");
 let Wall_Left =       new Texture("Graphics/x32/World/Wall_Left_32.png");
