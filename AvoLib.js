@@ -90,14 +90,18 @@ class CanDraw {
 
   Circle(x,y,r,style,color) {
     this.StartDraw(color || this.ctx.fillStyle);
+    Canvas.alpha(alpha);
     this.ctx.arc(x,y,r,0,Math.PI*2);
     this.EndDraw(style || this.style);
+    Canvas.alpha();
   }
 
   Dot(x,y,color,style) {
     this.StartDraw(color || this.ctx.fillStyle);
+    Canvas.alpha(alpha);
     this.ctx.arc(x,y,2,0,Math.PI*2);
     this.EndDraw(style || this.style);
+    Canvas.alpha();
   }
 
   Rectangle(x,y,w,h,style,color,alpha = 1) {
@@ -181,6 +185,13 @@ let round = (num,didgets) => {
 
 let map = (input,start,stop,min,max) => {
   return (input-start)*((max-min)/(stop-start))+min;
+};
+
+let random_point_in_circle = (max_radius,start_x = 0,start_y = 0) => {
+  let theta = 2*Math.PI*Math.random(); //angle = [0 ; 2PI];
+  let radius = Math.random()+Math.random(); // I = [0 ; 2] {2 random function for more "randomness"}
+      radius = (radius>1) ? (2-radius)*max_radius : radius*max_radius; //mapping to [0 ; 1]
+  return new V2D(radius*Math.cos(theta)+start_x,radius*Math.sin(theta)+start_y); //giving out coordinates
 };
 
 let random = (min, max) => {

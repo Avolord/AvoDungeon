@@ -2,6 +2,7 @@ let Character_isCreated = false;
 let Zoom = 2;
 let Character,
     CurrentDungeon;
+let MouseOnMap = {x:0,y:0};
 
 class Texture {
   constructor(src,start_x,start_y,end_x,end_y) {
@@ -38,5 +39,8 @@ let Wall_Left =       new Texture("Graphics/x32/Wall_Left_32.png");
 let Wall_Right =       new Texture("Graphics/x32/Wall_Right_32.png");
 let Wall_Corner_TL =  new Texture("Graphics/x32/Wall_CornerTL_32.bmp");
 let Wall_Corner_TR =  new Texture("Graphics/x32/Wall_CornerTR_32.bmp");
+
+let Field_Marker = new Texture("Graphics/x32/Field_Marker_32.png");
+let Field_Marker2 = new Texture("Graphics/x32/Field_Marker2_32.png");
 
 //let Chest_Texture = new Texture("Graphics/x32/Chest_32.png");

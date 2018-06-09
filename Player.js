@@ -121,3 +121,18 @@ document.onkeydown = function(e) {
     //CurrentDungeon.scroll(e.key);
   }
 }
+
+function showMouse() {
+  let Marked_pos = CurrentDungeon.map_data.data[MouseOnMap.y+CurrentDungeon.viewport[1]][MouseOnMap.x+CurrentDungeon.viewport[0]];
+  if(Marked_pos != 0) {
+  if(Marked_pos < 7)
+    Field_Marker.draw((MouseOnMap.x)*16*Zoom,(MouseOnMap.y)*16*Zoom);
+  else
+    Field_Marker2.draw((MouseOnMap.x)*16*Zoom,(MouseOnMap.y)*16*Zoom);
+  }
+}
+
+Canvas.Element.onmousemove = function(e) {
+  MouseOnMap.x = Math.floor((e.pageX - this.offsetLeft)/(16*Zoom));
+  MouseOnMap.y = Math.floor((e.pageY - this.offsetTop)/(16*Zoom));
+}

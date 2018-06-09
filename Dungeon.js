@@ -1,14 +1,13 @@
 class Dungeon  {
-  constructor(size = 50) {
+  constructor(size = 100) {
     this.map_data = new Matrix(size,size,0);
     //this.light_map.random(0,10);
     this.size = size;
     this.rooms = [];
     this.chests = [];
-    this.batch_size = 50;
     this.fully_lit = false;
-    this.viewport = [0,0,50/Zoom,50/Zoom];
-    this.generate(1);
+    this.viewport = [0,0,size/Zoom,size/Zoom];
+    this.generate2();
     this.light_map = this.generate_light_map();
     this.player_spawn = this.PlayerSpawn();
   }
@@ -41,11 +40,89 @@ class Dungeon  {
     this.build_rooms();
     this.build_corridors(1);
     this.build_walls();
-    this.SpawnChests();
+    this.SpawnChests(1);
 }
+
+generate2() {
+  let min_roomsize = 5;
+  let max_roomsize = 10;
+  let max_rooms = 1/(max_roomsize*max_roomsize)*Math.pow(this.size,1.5)+10;
+  this.rooms[0] = {x:random(1,50/Zoom-10),y:random(1,50/Zoom-10),w:random(5,10),h:random(5,10)}; //first Room in viewport
+  for(let i=1;i<max_rooms;i++) {
+    let room = {};
+    let location = random_point_in_circle(this.size/2-max_roomsize-1,this.size/2,this.size/2).min();
+      room.x = location.x;
+      room.y = location.y;
+      room.w = random(min_roomsize,max_roomsize);
+      room.h = random(min_roomsize,max_roomsize);
+
+      this.rooms.push(room);
+  }
+  this.steer_rooms(10,10);
+  this.build_rooms();
+  this.build_corridors();
+  this.build_walls();
+  this.SpawnChests(1);
+}
+
+  steer_rooms(iterations=1,buffer = 0) {
+    for(let i=0;i<iterations;i++) {
+    this.rooms = this.rooms.map((room,index) => {
+      let new_room = {x:room.x,y:room.y,w:room.w,h:room.h};
+      for(let check of this.rooms) {
+        if(!((check.x + check.w + buffer < room.x) ||
+            (check.y + check.h + buffer < room.y) ||
+            (check.x > room.x + room.w + buffer)  ||
+            (check.y > room.y + room.h + buffer)) &&
+             check != room)
+        {
+          new_room = Dungeon.resolveCollsion(room,check,this.size,buffer);
+          break;
+        }
+      }
+      return new_room;
+    });
+  }
+  }
+
+  static resolveCollsion(roomA,roomB,range,buffer = 0) {
+      let new_room = {x:roomA.x,y:roomA.y,w:roomA.w,h:roomA.h};
+      let iterations = 0;
+
+    while(!((roomB.x + roomB.w + buffer < new_room.x) ||
+        (roomB.y + roomB.h + buffer < new_room.y) ||
+        (roomB.x > new_room.x + new_room.w + buffer)  ||
+        (roomB.y > new_room.y + new_room.h + buffer))
+        && iterations<100)
+    {
+      iterations++;
+      let flee_x = (new_room.x+new_room.w/2)-(roomB.x+roomB.w/2);
+      let flee_y = (new_room.y+new_room.h/2)-(roomB.y+roomB.h/2)
+          new_room = {x:new_room.x,y:new_room.y,w:new_room.w,h:new_room.h};
+
+      if(new_room.x <= 1 || new_room.x+new_room.w >= range-2 || new_room.y <= 1 || new_room.y+new_room.h >= range-2) {
+        break;
+      }
+
+      if(flee_x < 0) {
+        new_room.x -= 1
+      } else {
+        new_room.x += 1;
+      }
+
+      if(flee_y < 0) {
+        new_room.y -= 1;
+      } else {
+        new_room.y += 1;
+      }
+    }
+    //console.log(iterations);
+    return new_room;
+  }
 
   build_rooms() {
     this.rooms.forEach(room => {
+      //console.log("x:"+room.x+" y:"+room.y+" w:"+room.w+" h:"+room.h);
       for(let i=0;i<=room.w;i++) {
         for(let j=0;j<=room.h;j++) {
           this.map_data.data[room.y+j][room.x+i] = 1;
@@ -58,8 +135,9 @@ class Dungeon  {
     for(let i=0;i<corridors_per_room;i++) {
     this.rooms.forEach(room => {
       let roomA = room;
-      let roomB = this.ClosestRoom(roomA);
-      let roomC = this.rooms[random(0,this.rooms.length-1)];
+      let closest_rooms = this.ClosestRoom(roomA,2);
+      let roomB = closest_rooms[0];
+      let roomC = closest_rooms[1];
 
       let PointA = {
         x:random(roomA.x,roomA.x+roomA.w-1),
@@ -84,15 +162,15 @@ class Dungeon  {
         this.map_data.data[PointB.y][PointB.x] = 1;
       }
 
-      // while((PointC.x != PointA.x) || (PointC.y != PointA.y)) {
-      //   if(PointC.x != PointA.x) {
-      //     PointC.x = (PointA.x < PointC.x) ? PointC.x-1 : PointC.x+1;
-      //   }
-      //    else if(PointA.y != PointC.y) {
-      //     PointC.y = (PointA.y < PointC.y) ? PointC.y-1 : PointC.y+1;
-      //   }
-      //   this.map_data.data[PointC.y][PointC.x] = 1;
-      // }
+      while((PointC.x != PointA.x) || (PointC.y != PointA.y)) {
+        if(PointC.x != PointA.x) {
+          PointC.x = (PointA.x < PointC.x) ? PointC.x-1 : PointC.x+1;
+        }
+         else if(PointA.y != PointC.y) {
+          PointC.y = (PointA.y < PointC.y) ? PointC.y-1 : PointC.y+1;
+        }
+        this.map_data.data[PointC.y][PointC.x] = 1;
+      }
     });
   }
   }
@@ -147,27 +225,32 @@ class Dungeon  {
 
   SpawnChests(frequency = 0.1) {
     this.rooms.forEach(room => {
-      if(random(0,1/frequency) == 0) {
+      if(random(0,1/frequency) <= 1) {
         let rows = room.y+random(1,room.h-2);
         let cols = room.x+random(1,room.w-2);
         this.map_data.data[rows][cols] = 7;
-        this.chests.push(new Chest(["small","medium","large"][random(0,2)]));
+        this.chests.push(new Chest(["small","medium","large"][random(0,2)])) ;
       }
     });
   }
 
-  ClosestRoom(room) {
-    let min_dist = Infinity;
-    let closest = null;
+  ClosestRoom(room,amount = 1) {
+    let min_dist = new Array(amount).fill(Infinity);
+    let closest = new Array(amount).fill(null);
     this.rooms.forEach(iterator => {
       if(iterator == room) {return}
       const curr_dist = Dungeon.dist_between_rooms(room,iterator);
-      if(curr_dist<min_dist) {
-        min_dist = curr_dist;
-        closest = iterator;
+      if(curr_dist<min_dist[amount-1]) {
+        replace : for(let i in min_dist) {
+          if(curr_dist<min_dist[i]) {
+            min_dist[i] = curr_dist;
+            closest[i]  = iterator;
+            break replace;
+          }
+        }
       }
     });
-    return closest;
+    return (amount===1) ? closest[0] : closest;
   }
 
   static dist_between_rooms(roomA,roomB) {
@@ -279,7 +362,7 @@ class Dungeon  {
 }
 
  function zoom(value = 2) {
-  Zoom = (50/value <= CurrentDungeon.size) ? value : Zoom;
+  Zoom = (50/value <= CurrentDungeon.size) ? value : 50/CurrentDungeon.size;
   CurrentDungeon.viewport = [0,0,50/Zoom,50/Zoom];
 }
 

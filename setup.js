@@ -1,14 +1,17 @@
 Animation(true);
 
-CurrentDungeon = new Dungeon(50);
+CurrentDungeon = new Dungeon(100);
 new Warrior("Jochen");
 
 function setup() {
+	//zoom(0.1)
+	CurrentDungeon.clear_light_map();
 }
 
 function draw() {
 	CurrentDungeon.draw();
 	Character.draw();
+	showMouse();
 }
 
 function NoLoop() {
